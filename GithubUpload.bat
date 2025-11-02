@@ -1,7 +1,7 @@
 @echo off
 setlocal
 echo ========================================
-echo  SMART GIT UPLOADER (Multi-Repo) v3
+echo  SMART GIT UPLOADER (Multi-Repo) v4
 echo ========================================
 echo.
 
@@ -65,21 +65,22 @@ if %IS_NEW_REPO% == 0 (
     if errorlevel 2 (
         echo.
         echo ✅ Group mode: 'merge' (default pull) select kora holo.
-        set PULL_CMD=git pull origin %BRANCH%
+        :: (FIX) --no-edit add kora holo jate editor na khole
+        set PULL_CMD=git pull origin %BRANCH% --no-edit
     ) else (
         echo.
         echo ✅ Solo mode: 'rebase' select kora holo.
-        set PULL_CMD=git pull origin %BRANCH% --rebase
+        :: (FIX) --autostash add kora holo conflict komate
+        set PULL_CMD=git pull origin %BRANCH% --rebase --autostash
     )
     
     echo.
     echo 📥 GitHub theke code pull korchi...
     %PULL_CMD%
-
-    :: === (FIX) ===
-    :: Pull command-er por theke error check baad deya holo
-    :: Ekhon ar 'solo' mode-e script bondho hobe na.
-    :: Jodi pull-e conflict hoy, push-er shomoy seta dhora porbe.
+    
+    echo.
+    echo ℹ️ DEBUG: Pull command shesh hoyeche.
+    pause :: (FIX) Ekhane pause add kora holo jate script bondho na hoye jay
     
 ) else (
     echo.
