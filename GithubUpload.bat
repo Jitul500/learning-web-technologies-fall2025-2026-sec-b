@@ -1,7 +1,8 @@
 @echo off
 setlocal
 echo ========================================
-echo  SMART GIT UPLOADER (Multi-Repo) v4
+echo  SMART GIT UPLOADER (Multi-Repo) v5
+echo  (DEBUG MODE - Step-by-Step)
 echo ========================================
 echo.
 
@@ -37,18 +38,26 @@ if not exist .git (
 )
 
 :: === STEP 4: Update remote link ===
+echo ℹ️ DEBUG: 'git remote set-url' chalacchi...
 git remote set-url origin %REPO%
+echo.
+pause
 
 :: === STEP 5: Add and commit ===
-echo.
 echo ➕ Adding all local changes...
+echo ℹ️ DEBUG: 'git add .' chalacchi...
 git add .
+echo.
+pause
 
 set /p msg=Enter commit message (default: auto update): 
 if "%msg%"=="" set msg=auto update
 
 echo 💬 Committing changes...
+echo ℹ️ DEBUG: 'git commit' chalacchi...
 git commit --allow-empty -m "%msg%"
+echo.
+pause
 
 :: === STEP 6 & 7: Pull (Only if NOT a new repo) ===
 if %IS_NEW_REPO% == 0 (
@@ -56,8 +65,8 @@ if %IS_NEW_REPO% == 0 (
     echo ----------------------------------------
     echo   ❓ Pull Strategy Select Korun
     echo ----------------------------------------
-    echo    [1] Solo Project (Rebase use korbo)
-    echo    [2] Group Project (Merge use korbo)
+    echo    [1] Solo Project (Rebase)
+    echo    [2] Group Project (Merge)
     echo.
 
     choice /c:12 /n /m "Apni ki bhabe kaj korchen [1 or 2]? "
@@ -65,22 +74,20 @@ if %IS_NEW_REPO% == 0 (
     if errorlevel 2 (
         echo.
         echo ✅ Group mode: 'merge' (default pull) select kora holo.
-        :: (FIX) --no-edit add kora holo jate editor na khole
-        set PULL_CMD=git pull origin %BRANCH% --no-edit
+        echo ℹ️ DEBUG: Ekhon 'git pull' (merge) chalano hobe...
+        pause
+        git pull origin %BRANCH% --no-edit
+        echo ℹ️ DEBUG: 'git pull' (merge) command shesh hoyeche.
+        pause
     ) else (
         echo.
         echo ✅ Solo mode: 'rebase' select kora holo.
-        :: (FIX) --autostash add kora holo conflict komate
-        set PULL_CMD=git pull origin %BRANCH% --rebase --autostash
+        echo ℹ️ DEBUG: Ekhon 'git pull' (rebase) chalano hobe...
+        pause
+        git pull origin %BRANCH% --rebase --autostash
+        echo ℹ️ DEBUG: 'git pull' (rebase) command shesh hoyeche.
+        pause
     )
-    
-    echo.
-    echo 📥 GitHub theke code pull korchi...
-    %PULL_CMD%
-    
-    echo.
-    echo ℹ️ DEBUG: Pull command shesh hoyeche.
-    pause :: (FIX) Ekhane pause add kora holo jate script bondho na hoye jay
     
 ) else (
     echo.
@@ -91,17 +98,19 @@ if %IS_NEW_REPO% == 0 (
 :: === STEP 8: Push to PRIMARY GitHub ===
 echo.
 echo 🚀 Primary repository-te upload korchi...
+echo ℹ️ DEBUG: Ekhon 'git push' chalano hobe...
+pause
 git push -u origin %BRANCH%
 
 if errorlevel 1 (
     echo ❗ Primary repo-te push korte giye problem hoyeche.
-    echo ❗ (Jodi pull conflict hoye thake, age setake solve korun)
     pause
     exit /b
 )
 
 echo ✅ Primary push complete!
 echo.
+pause
 
 :: === STEP 9: Ask for secondary push ===
 echo ----------------------------------------
@@ -132,11 +141,8 @@ set SECOND_REMOTE_NAME=secondary_backup
 
 (git remote remove %SECOND_REMOTE_NAME%) >nul 2>nul
 git remote add %SECOND_REMOTE_NAME% %SECOND_REPO%
-
-if errorlevel 1 (
-    echo ❗ Remote add korte giye problem hoyeche. Link-ti check korun.
-    goto :end_script
-)
+echo ℹ️ DEBUG: Ditiyo remote add kora hoyeche.
+pause
 
 echo 🚀 Uploading code to %SECOND_REMOTE_NAME%...
 git push -u %SECOND_REMOTE_NAME% %BRANCH%
