@@ -1,7 +1,7 @@
 @echo off
 setlocal
 echo ========================================
-echo  SMART GIT UPLOADER (Multi-Repo) v2
+echo  SMART GIT UPLOADER (Multi-Repo) v3
 echo ========================================
 echo.
 
@@ -76,13 +76,11 @@ if %IS_NEW_REPO% == 0 (
     echo 📥 GitHub theke code pull korchi...
     %PULL_CMD%
 
-    if errorlevel 1 (
-        echo.
-        echo ❗ PULL KORTE GIYE CONFLICT HOYECHE!
-        echo ❗ Conflict solve kore script ti abar chalun.
-        pause
-        exit /b
-    )
+    :: === (FIX) ===
+    :: Pull command-er por theke error check baad deya holo
+    :: Ekhon ar 'solo' mode-e script bondho hobe na.
+    :: Jodi pull-e conflict hoy, push-er shomoy seta dhora porbe.
+    
 ) else (
     echo.
     echo ℹ️ New repository, 'pull' step skip kora hocche.
@@ -96,6 +94,7 @@ git push -u origin %BRANCH%
 
 if errorlevel 1 (
     echo ❗ Primary repo-te push korte giye problem hoyeche.
+    echo ❗ (Jodi pull conflict hoye thake, age setake solve korun)
     pause
     exit /b
 )
