@@ -1,14 +1,10 @@
 @echo off
-setlocal
 echo ========================================
-echo  SMART AUTO GIT UPLOADER (Rebase Mode)
+echo     SMART AUTO GIT UPLOADER (by Shoieb)
 echo ========================================
 echo.
 
-:: === Set a flag for new repo ===
-set IS_NEW_REPO=0
-
-:: === STEP 1: Ask for PRIMARY repository link ===
+:: === STEP 1: Ask for repository link ===
 set /p REPO=Enter your GitHub repository link: 
 if "%REPO%"=="" (
     echo ❌ Repository link required!
@@ -16,12 +12,12 @@ if "%REPO%"=="" (
     exit /b
 )
 
-:: === STEP 2: Ask for branch name ===
+:: === STEP 2: Ask for branch name (Default changed to 'main') ===
 set /p BRANCH=Enter branch name (default: main): 
 if "%BRANCH%"=="" set BRANCH=main
 
 echo.
-echo Primary Repository: %REPO%
+echo Repository: %REPO%
 echo Branch: %BRANCH%
 echo.
 
@@ -31,15 +27,14 @@ if not exist .git (
     git init
     git branch -M %BRANCH%
     git remote add origin %REPO%
-    set IS_NEW_REPO=1
 ) else (
     echo ✅ Git repository already initialized.
 )
 
-:: === STEP 4: Update remote link ===
+:: === STEP 4: Update remote link (safe) ===
 git remote set-url origin %REPO%
 
-:: === STEP 5: Add and commit ===
+:: === STEP 5: Add and commit (Moved before pull) ===
 echo.
 echo ➕ Adding all local changes...
 git add .
@@ -48,36 +43,20 @@ set /p msg=Enter commit message (default: auto update):
 if "%msg%"=="" set msg=auto update
 
 echo 💬 Committing changes...
+:: --allow-empty flag ensures script doesn't stop if there are no changes
 git commit --allow-empty -m "%msg%"
 
-:: === STEP 6: Pull (Rebase Mode) ===
-if %IS_NEW_REPO% == 0 (
-    echo.
-    echo 📥 GitHub theke code pull korchi (Rebase Mode)...
-    
-    :: Shudhumatro rebase command use kora hocche
-    git pull origin %BRANCH% --rebase --autostash
-    
-) else (
-    echo ℹ️ New repository, 'pull' step skip kora hocche.
-)
-
-:: === STEP 7: Push to PRIMARY GitHub ===
+:: === STEP 6: Pull latest changes (Rebase mode) ===
 echo.
-echo 🚀 Primary repository-te upload korchi...
+echo 📥 Pulling latest code from GitHub...
+git pull origin %BRANCH% --rebase
+
+:: === STEP 7: Push to GitHub (Using -u for safety) ===
+echo.
+echo 🚀 Uploading code to GitHub...
+:: '-u' sets the upstream branch. Safe for first-time and all future pushes.
 git push -u origin %BRANCH%
 
-if errorlevel 1 (
-    echo ❗❗❗ Push korte giye problem hoyeche. ❗❗❗
-    echo ❗ (Jodi pull conflict hoye thake, age setake solve korun)
-    pause
-    exit /b
-)
-
-echo ✅ Primary push complete!
-
-:end_script
 echo.
-echo ✅ All done! Script shesh holo.
+echo ✅ All done! Code uploaded successfully.
 pause
-endlocal
