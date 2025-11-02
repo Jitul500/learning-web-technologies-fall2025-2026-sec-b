@@ -1,10 +1,14 @@
 @echo off
+setlocal
 echo ========================================
-echo   SMART AUTO GIT UPLOADER (v9)
+echo  SMART AUTO GIT UPLOADER (Rebase Mode)
 echo ========================================
 echo.
 
-:: === STEP 1: Ask for repository link ===
+:: === Set a flag for new repo ===
+set IS_NEW_REPO=0
+
+:: === STEP 1: Ask for PRIMARY repository link ===
 set /p REPO=Enter your GitHub repository link: 
 if "%REPO%"=="" (
     echo ❌ Repository link required!
@@ -17,7 +21,7 @@ set /p BRANCH=Enter branch name (default: main):
 if "%BRANCH%"=="" set BRANCH=main
 
 echo.
-echo Repository: %REPO%
+echo Primary Repository: %REPO%
 echo Branch: %BRANCH%
 echo.
 
@@ -27,11 +31,12 @@ if not exist .git (
     git init
     git branch -M %BRANCH%
     git remote add origin %REPO%
+    set IS_NEW_REPO=1
 ) else (
     echo ✅ Git repository already initialized.
 )
 
-:: === STEP 4: Update remote link (safe) ===
+:: === STEP 4: Update remote link ===
 git remote set-url origin %REPO%
 
 :: === STEP 5: Add and commit ===
@@ -45,36 +50,34 @@ if "%msg%"=="" set msg=auto update
 echo 💬 Committing changes...
 git commit --allow-empty -m "%msg%"
 
-:: === STEP 6: (NEW) Ask for Pull Strategy ===
-echo.
-echo ----------------------------------------
-echo   ❓ Pull Strategy Select Korun
-echo ----------------------------------------
-echo    [1] Solo Project (Rebase use korbo)
-echo    [2] Group Project (Merge use korbo)
-echo.
-
-choice /c:12 /n /m "Apni ki bhabe kaj korchen [1 or 2]? "
-
-if errorlevel 2 (
+:: === STEP 6: Pull (Rebase Mode) ===
+if %IS_NEW_REPO% == 0 (
     echo.
-    echo ✅ Group mode: 'merge' (default pull) select kora holo.
-    set PULL_CMD=git pull origin %BRANCH% --no-edit
+    echo 📥 GitHub theke code pull korchi (Rebase Mode)...
+    
+    :: Shudhumatro rebase command use kora hocche
+    git pull origin %BRANCH% --rebase --autostash
+    
 ) else (
-    echo.
-    echo ✅ Solo mode: 'rebase' select kora holo.
-    set PULL_CMD=git pull origin %BRANCH% --rebase --autostash
+    echo ℹ️ New repository, 'pull' step skip kora hocche.
 )
-    
+
+:: === STEP 7: Push to PRIMARY GitHub ===
 echo.
-echo 📥 GitHub theke code pull korchi...
-%PULL_CMD%
-    
-:: === STEP 7: Push to GitHub ===
-echo.
-echo 🚀 Uploading code to GitHub...
+echo 🚀 Primary repository-te upload korchi...
 git push -u origin %BRANCH%
 
+if errorlevel 1 (
+    echo ❗❗❗ Push korte giye problem hoyeche. ❗❗❗
+    echo ❗ (Jodi pull conflict hoye thake, age setake solve korun)
+    pause
+    exit /b
+)
+
+echo ✅ Primary push complete!
+
+:end_script
 echo.
-echo ✅ All done! Code uploaded successfully.
+echo ✅ All done! Script shesh holo.
 pause
+endlocal
