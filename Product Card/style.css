@@ -1,0 +1,79 @@
+/* Basic styles for the whole page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Light gray background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Make the page at least the height of the screen */
+    margin: 0;
+}
+
+/* The main card container */
+.product-card {
+    width: 320px;
+    background-color: #ffffff; /* White background for the card */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    overflow: hidden; /* Ensures the image respects the rounded corners */
+    transition: transform 0.3s ease; /* Smooth hover effect */
+}
+
+.product-card:hover {
+    transform: translateY(-5px); /* Lifts the card up slightly on hover */
+}
+
+/* Image styling */
+.card-image img {
+    width: 100%;
+    height: auto;
+    display: block; /* Removes any extra space below the image */
+}
+
+/* Content area styling */
+.card-content {
+    padding: 20px;
+    text-align: center; /* Center-align all the text */
+}
+
+/* Product title */
+.product-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Product price */
+.product-price {
+    font-size: 20px;
+    color: #007bff; /* Blue color for price */
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Product description */
+.product-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* 'Add to Cart' button */
+.buy-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer; /* Changes the cursor to a hand on hover */
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.buy-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
