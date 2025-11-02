@@ -1,8 +1,12 @@
 @echo off
+setlocal
 echo ========================================
-echo  SMART GIT UPLOADER (Multi-Repo)
+echo  SMART GIT UPLOADER (Multi-Repo) v2
 echo ========================================
 echo.
+
+:: === Set a flag for new repo ===
+set IS_NEW_REPO=0
 
 :: === STEP 1: Ask for PRIMARY repository link ===
 set /p REPO=Enter your PRIMARY GitHub repository link: 
@@ -27,6 +31,7 @@ if not exist .git (
     git init
     git branch -M %BRANCH%
     git remote add origin %REPO%
+    set IS_NEW_REPO=1
 ) else (
     echo ✅ Git repository already initialized.
 )
@@ -45,39 +50,44 @@ if "%msg%"=="" set msg=auto update
 echo 💬 Committing changes...
 git commit --allow-empty -m "%msg%"
 
-:: === STEP 6: Ask for Pull Strategy (Solo vs Group) ===
-echo.
-echo ----------------------------------------
-echo   ❓ Pull Strategy Select Korun
-echo ----------------------------------------
-echo    [1] Solo Project (Rebase use korbo)
-echo    [2] Group Project (Merge use korbo)
-echo.
-
-choice /c:12 /n /m "Apni ki bhabe kaj korchen [1 or 2]? "
-
-if errorlevel 2 (
+:: === STEP 6 & 7: Pull (Only if NOT a new repo) ===
+if %IS_NEW_REPO% == 0 (
     echo.
-    echo ✅ Group mode: 'merge' (default pull) select kora holo.
-    set PULL_CMD=git pull origin %BRANCH%
+    echo ----------------------------------------
+    echo   ❓ Pull Strategy Select Korun
+    echo ----------------------------------------
+    echo    [1] Solo Project (Rebase use korbo)
+    echo    [2] Group Project (Merge use korbo)
+    echo.
+
+    choice /c:12 /n /m "Apni ki bhabe kaj korchen [1 or 2]? "
+
+    if errorlevel 2 (
+        echo.
+        echo ✅ Group mode: 'merge' (default pull) select kora holo.
+        set PULL_CMD=git pull origin %BRANCH%
+    ) else (
+        echo.
+        echo ✅ Solo mode: 'rebase' select kora holo.
+        set PULL_CMD=git pull origin %BRANCH% --rebase
+    )
+    
+    echo.
+    echo 📥 GitHub theke code pull korchi...
+    %PULL_CMD%
+
+    if errorlevel 1 (
+        echo.
+        echo ❗ PULL KORTE GIYE CONFLICT HOYECHE!
+        echo ❗ Conflict solve kore script ti abar chalun.
+        pause
+        exit /b
+    )
 ) else (
     echo.
-    echo ✅ Solo mode: 'rebase' select kora holo.
-    set PULL_CMD=git pull origin %BRANCH% --rebase
+    echo ℹ️ New repository, 'pull' step skip kora hocche.
 )
 
-:: === STEP 7: Pull latest changes ===
-echo.
-echo 📥 GitHub theke code pull korchi...
-%PULL_CMD%
-
-if errorlevel 1 (
-    echo.
-    echo ❗ PULL KORTE GIYE CONFLICT HOYECHE!
-    echo ❗ Conflict solve kore script ti abar chalun.
-    pause
-    exit /b
-)
 
 :: === STEP 8: Push to PRIMARY GitHub ===
 echo.
@@ -93,7 +103,7 @@ if errorlevel 1 (
 echo ✅ Primary push complete!
 echo.
 
-:: === STEP 9: (NEW) Ask for secondary push ===
+:: === STEP 9: Ask for secondary push ===
 echo ----------------------------------------
 echo   ❓ Backup to another repository?
 echo ----------------------------------------
@@ -118,13 +128,9 @@ if "%SECOND_REPO%"=="" (
 echo.
 echo ☁️ Ditiyo repository-te push korar cheshta korchi...
 
-:: Define a fixed name for the secondary remote
 set SECOND_REMOTE_NAME=secondary_backup
 
-:: Remove the remote if it exists (silence errors)
 (git remote remove %SECOND_REMOTE_NAME%) >nul 2>nul
-
-:: Add the new remote
 git remote add %SECOND_REMOTE_NAME% %SECOND_REPO%
 
 if errorlevel 1 (
@@ -132,7 +138,6 @@ if errorlevel 1 (
     goto :end_script
 )
 
-:: Push to the new remote
 echo 🚀 Uploading code to %SECOND_REMOTE_NAME%...
 git push -u %SECOND_REMOTE_NAME% %BRANCH%
 
@@ -147,3 +152,4 @@ if errorlevel 1 (
 echo.
 echo ✅ All done! Script shesh holo.
 pause
+endlocal
