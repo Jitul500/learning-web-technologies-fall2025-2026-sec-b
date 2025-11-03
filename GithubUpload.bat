@@ -1,7 +1,7 @@
 @echo off
 cls
 echo ========================================
-echo     SMART AUTO GIT UPLOADER (Team Safe)
+echo     SMART AUTO GIT UPLOADER (Auto Mode)
 echo ========================================
 echo.
 
@@ -22,7 +22,21 @@ echo Repository: %REPO%
 echo Branch: %BRANCH%
 echo.
 
-:: STEP 3: Initialize Git if not exists
+:: STEP 3: Ask if group or solo project
+set /p MODE=Are you working in a group project or solo? (group/solo, default: group): 
+if "%MODE%"=="" set MODE=group
+
+if /I "%MODE%"=="group" (
+    set PULLMODE=merge
+) else (
+    set PULLMODE=rebase
+)
+
+echo Selected mode: %MODE% project
+echo Pull method: %PULLMODE%
+echo.
+
+:: STEP 4: Initialize Git if not exists
 if not exist .git (
     echo 🧱 Initializing new Git repository...
     git init
@@ -32,14 +46,14 @@ if not exist .git (
     echo ✅ Git repository already initialized.
 )
 
-:: STEP 4: Ensure remote origin exists
+:: STEP 5: Ensure remote origin exists
 git remote get-url origin >nul 2>&1
 if errorlevel 1 (
     git remote add origin %REPO%
 )
 git remote set-url origin %REPO%
 
-:: STEP 5: Add and commit
+:: STEP 6: Add and commit
 echo.
 echo ➕ Adding all local changes...
 git add .
@@ -50,17 +64,23 @@ if "%msg%"=="" set msg=auto update
 echo 💬 Committing changes...
 git commit --allow-empty -m "%msg%"
 
-:: STEP 6: Pull latest changes (merge mode)
+:: STEP 7: Pull latest changes (depends on mode)
 echo.
-echo 📥 Pulling latest code from GitHub (merge mode)...
-git pull origin %BRANCH%
+if /I "%PULLMODE%"=="rebase" (
+    echo 📥 Pulling latest code from GitHub (rebase mode for solo)...
+    git pull origin %BRANCH% --rebase
+) else (
+    echo 📥 Pulling latest code from GitHub (merge mode for group)...
+    git pull origin %BRANCH%
+)
+
 if errorlevel 1 (
     echo ❌ Pull failed! Please resolve merge conflicts manually.
     pause
     exit /b
 )
 
-:: STEP 7: Push to GitHub
+:: STEP 8: Push to GitHub
 echo.
 echo 🚀 Uploading code to GitHub...
 git push -u origin %BRANCH%
@@ -73,7 +93,7 @@ if errorlevel 1 (
 echo.
 echo ✅ All done! Code uploaded successfully.
 
-:: === STEP 8: Ask for another repository ===
+:: === STEP 9: Ask for another repository ===
 :ANOTHER_REPO
 echo.
 set /p AGAIN=Do you want to upload to another repository? (y/n): 
