@@ -26,10 +26,19 @@ echo.
 set /p MODE=Are you working in a group project or solo? (group/solo, default: group): 
 if "%MODE%"=="" set MODE=group
 
+:: Ensure no extra spaces or uppercase issues
+set MODE=%MODE: =%
+set MODE=%MODE:"=%
+
 if /I "%MODE%"=="group" (
     set PULLMODE=merge
 ) else (
-    set PULLMODE=rebase
+    if /I "%MODE%"=="solo" (
+        set PULLMODE=rebase
+    ) else (
+        echo ⚠️ Invalid input! Defaulting to group mode.
+        set PULLMODE=merge
+    )
 )
 
 echo Selected mode: %MODE% project
