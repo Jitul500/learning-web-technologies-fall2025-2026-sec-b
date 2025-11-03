@@ -1,79 +1,229 @@
-/* Basic styles for the whole page */
+/* General Body Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4; /* Light gray background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Make the page at least the height of the screen */
+    background-color: #f0f2f5; 
     margin: 0;
+    line-height: 1.6;
+    color: #333;
 }
 
-/* The main card container */
+
+.main-header {
+    background-color: #333;  
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.navbar {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex; 
+    align-items: center;
+    padding: 0 20px;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 25px; 
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: #007bff; 
+}
+
+.social-icons {
+    margin-left: auto; 
+}
+
+.social-icons a {
+    color: white;
+    font-size: 20px;
+    margin-left: 15px; 
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #007bff; 
+}
+
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto; 
+    padding: 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px; 
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background-color: #007bff;
+    border-radius: 2px;
+}
+
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 30px; 
+    justify-content: center; 
+}
+
+
 .product-card {
-    width: 320px;
-    background-color: #ffffff; /* White background for the card */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-    overflow: hidden; /* Ensures the image respects the rounded corners */
-    transition: transform 0.3s ease; /* Smooth hover effect */
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column; 
 }
 
 .product-card:hover {
-    transform: translateY(-5px); /* Lifts the card up slightly on hover */
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Image styling */
+.card-image {
+    height: 200px; 
+    overflow: hidden; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eee; 
+}
+
 .card-image img {
     width: 100%;
-    height: auto;
-    display: block; /* Removes any extra space below the image */
+    height: 100%;
+    object-fit: cover; 
+    display: block;
 }
 
-/* Content area styling */
 .card-content {
-    padding: 20px;
-    text-align: center; /* Center-align all the text */
+    padding: 15px;
+    text-align: center;
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
 }
 
-/* Product title */
 .product-title {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    flex-grow: 1; 
 }
 
-/* Product price */
 .product-price {
-    font-size: 20px;
-    color: #007bff; /* Blue color for price */
+    font-size: 18px;
+    color: #007bff;
     font-weight: bold;
     margin-bottom: 15px;
 }
 
-/* Product description */
-.product-description {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 20px;
-}
 
-/* 'Add to Cart' button */
 .buy-button {
-    width: 100%;
-    padding: 12px;
+    width: 90%; 
+    padding: 10px;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
-    cursor: pointer; /* Changes the cursor to a hand on hover */
+    cursor: pointer;
     transition: background-color 0.3s ease;
+    margin: 0 auto; 
+    display: block; 
 }
 
-/* Button hover effect */
 .buy-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
+}
+
+
+.main-footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 15px;
+    }
+    .nav-links {
+        margin-bottom: 15px;
+        gap: 15px;
+    }
+    .social-icons {
+        margin-top: 10px;
+    }
+    .product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title {
+        font-size: 28px;
+    }
+    .product-grid {
+        grid-template-columns: 1fr; 
+    }
+    .product-card {
+        width: 90%;
+        margin: 0 auto; 
+    }
+
+    /* Small screen specific adjustments for navbar to ensure icons are not too far */
+    .navbar {
+        align-items: center; /* Center items when stacked */
+    }
+    .nav-links {
+        width: 100%;
+        justify-content: center; /* Center nav links */
+    }
+    .social-icons {
+        width: 100%;
+        text-align: center; /* Center icons */
+        margin-left: 0; /* Remove left margin */
+    }
+    .social-icons a {
+        margin: 0 10px; /* Add some horizontal spacing between icons */
+    }
 }
