@@ -25,7 +25,6 @@ echo.
 :: STEP 3: Ask if group or solo project
 set /p MODE=Are you working in a group project or solo? (group/solo, default: group): 
 if "%MODE%"=="" set MODE=group
-
 set MODE=%MODE: =%
 set MODE=%MODE:"=%
 
@@ -72,24 +71,30 @@ if "%msg%"=="" set msg=auto update
 echo 💬 Committing changes...
 git commit --allow-empty -m "%msg%"
 
-:: STEP 7: Pull latest changes (Crash Safe)
+:: STEP 7: Pull latest changes safely (handle non-empty remote repo)
 echo.
 echo 📥 Syncing latest changes from GitHub...
-if /I "%PULLMODE%"=="rebase" (
-    git fetch origin %BRANCH%
-    git rebase origin/%BRANCH%
-) else (
-    git fetch origin %BRANCH%
-    git merge origin/%BRANCH%
-)
+git fetch origin %BRANCH%
 
-if errorlevel 1 (
-    echo ⚠️ Pull failed or conflict detected!
-    echo 🔧 Trying to recover safely...
-    git rebase --abort >nul 2>&1
-    git merge --abort >nul 2>&1
-    git reset --merge
-    echo ⚠️ Pull skipped due to conflicts. Please resolve manually later.
+:: Detect if remote branch exists
+git ls-remote --exit-code %REPO% %BRANCH% >nul 2>&1
+if %errorlevel%==0 (
+    echo Remote branch exists. Pulling changes safely...
+    if /I "%PULLMODE%"=="rebase" (
+        git rebase origin/%BRANCH%
+    ) else (
+        git merge origin/%BRANCH%
+    )
+
+    if errorlevel 1 (
+        echo ⚠️ Pull conflict detected! Aborting merge/rebase...
+        git rebase --abort >nul 2>&1
+        git merge --abort >nul 2>&1
+        git reset --merge
+        echo ⚠️ Conflicts not merged. Resolve manually later.
+    )
+) else (
+    echo Remote branch does not exist. Skipping pull.
 )
 
 :: STEP 8: Push to GitHub
@@ -105,7 +110,7 @@ if errorlevel 1 (
 echo.
 echo ✅ All done! Code uploaded successfully.
 
-:: === STEP 9: Ask for another repository ===
+:: STEP 9: Ask for another repository
 :ANOTHER_REPO
 echo.
 set /p AGAIN=Do you want to upload to another repository? (y/n): 
