@@ -1,7 +1,7 @@
 @echo off
 cls
 echo ========================================
-echo     SMART AUTO GIT UPLOADER (Auto Mode)
+echo     SMART AUTO GIT UPLOADER (Stable)
 echo ========================================
 echo.
 
@@ -26,7 +26,6 @@ echo.
 set /p MODE=Are you working in a group project or solo? (group/solo, default: group): 
 if "%MODE%"=="" set MODE=group
 
-:: Ensure no extra spaces or uppercase issues
 set MODE=%MODE: =%
 set MODE=%MODE:"=%
 
@@ -73,20 +72,24 @@ if "%msg%"=="" set msg=auto update
 echo 💬 Committing changes...
 git commit --allow-empty -m "%msg%"
 
-:: STEP 7: Pull latest changes (depends on mode)
+:: STEP 7: Pull latest changes (Crash Safe)
 echo.
+echo 📥 Syncing latest changes from GitHub...
 if /I "%PULLMODE%"=="rebase" (
-    echo 📥 Pulling latest code from GitHub (rebase mode for solo)...
-    git pull origin %BRANCH% --rebase
+    git fetch origin %BRANCH%
+    git rebase origin/%BRANCH%
 ) else (
-    echo 📥 Pulling latest code from GitHub (merge mode for group)...
-    git pull origin %BRANCH%
+    git fetch origin %BRANCH%
+    git merge origin/%BRANCH%
 )
 
 if errorlevel 1 (
-    echo ❌ Pull failed! Please resolve merge conflicts manually.
-    pause
-    exit /b
+    echo ⚠️ Pull failed or conflict detected!
+    echo 🔧 Trying to recover safely...
+    git rebase --abort >nul 2>&1
+    git merge --abort >nul 2>&1
+    git reset --merge
+    echo ⚠️ Pull skipped due to conflicts. Please resolve manually later.
 )
 
 :: STEP 8: Push to GitHub
