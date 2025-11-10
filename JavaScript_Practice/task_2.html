@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>JS Practice</title>
+</head>
+
+<body>
+  <h1>JS Practice</h1>
+
+  <form action="" method="" enctype="" id="age" onsubmit="return checkage()">
+    <input type="text" id="userage" name="userage" value="" placeholder="Enter Your Age" onblur="testAge()" />
+    <p id="uError"></p>
+
+    <input type="submit" name="" value="submit" id="btn" />
+    <!-- <input type="button" name="" value="reset" id="resetbtn" onclick="resetForm()"/> -->
+  </form>
+
+  <script>
+    function testAge() {
+
+      let age = document.getElementById('userage').value;
+      let msg = document.getElementById('uError');
+
+      if (age > 0 && age < 40) {
+        msg.innerHTML = "To be a part of the community, you need to at least 40!";
+        msg.style.color = "red";
+
+      } else if (age >= 40 && age <= 50) {
+        msg.innerHTML = "You are youngstar! Welcome to the community!";
+        msg.style.color = "green";
+      } else if (age > 50) {
+        msg.innerHTML = "Top level members of the group! ";
+        msg.style.color = "red";
+      } 
+      else if (age == "") {
+
+        msg.innerHTML = "please type your age first!";
+        msg.style.color = "red";
+
+      } else if (isNaN(age)) {
+        msg.innerHTML = "please enter a valid number!";
+        msg.style.color = "red";
+      } 
+      else if (age < 0 || age > 100) {
+        msg.innerHTML = "enter any number between 0-100";
+        msg.style.color = "red";
+      }else {
+
+        msg.innerHTML = "submitted successfully!";
+        msg.style.color = "green";
+      }
+      
+
+    }
+
+
+    function checkage() {
+      let age = document.getElementById('userage').value;
+      let msg = document.getElementById('uError');
+
+      if (age == "" || isNaN(age)) {
+        msg.innerHTML = "please type your age first!";
+        msg.style.color = "red";
+      } else {
+        document.getElementsByTagName('h1')[0].innerHTML = age;
+        msg.innerHTML = "";
+
+      }
+
+    }
+
+  </script>
+</body>
+
+</html>
