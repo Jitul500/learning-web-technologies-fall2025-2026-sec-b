@@ -10,19 +10,12 @@
   <center>
     <h1>Registration</h1>
     <br>
-    <select id="fieldType">
-      <option value="">Select A Field</option>
-      <option value="username">UserName</option>
-      <option value="gender">Gender</option>
-      <option value="email">Email</option>
-      <option value="address">Address</option>
-      <option value="phone">Phone Number</option>
-      <option value="password">Password</option>
-    </select>
+    <input type="text" id="userChoice" placeholder="Type: username, email, etc..">
 
     <button onclick="addField()">+ADD</button>
     <hr>
     <div id="dynamic-fields"></div>
+    <p id="pError" style="font-weight: bold; height: 20px;"></p>
 
     <button onclick="saveData()">Save</button>
   </center>
