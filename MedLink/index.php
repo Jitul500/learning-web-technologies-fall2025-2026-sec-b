@@ -1,3 +1,7 @@
+<?php
+// index.php - Main landing page for MedLink Smart Healthcare System
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,8 +9,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MedLink - Smart Healthcare System</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="Assets/style.css">
+  
 </head>
 
 <body>
@@ -25,7 +29,7 @@
         <a href="#">Solutions</a>
         <a href="#">About Us</a>
         <a href="#">Contact</a>
-        <a href="#" class="btn-login">Login/Sign-Up</a>
+        <a href="" class="btn-login">Login/Sign-Up</a>
       </nav>
       <div class="menu-icon" id="menu-toggle">
         <i class="fas fa-bars"></i>
